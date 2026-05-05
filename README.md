@@ -13,6 +13,7 @@
 - JWTService — генерирует, проверяет и извлекает данные из JWT.
 - MyUserDetailsService — загружает пользователя из базы.
 - JwtBlackListService - бизнес-логика добавления токена в ЧС
+
 Прочее: 
 - JwtRequest, JwtResponse - Dto для передачи данных
 - User - модель для хранения пользователя в БД
