@@ -22,6 +22,4 @@ public class FileChecker {
     public boolean hasValidDirectory(File file){
         return Objects.equals(file.getParent(), properties.getSTORAGE_DIRECTORY());
     }
-
-
 }

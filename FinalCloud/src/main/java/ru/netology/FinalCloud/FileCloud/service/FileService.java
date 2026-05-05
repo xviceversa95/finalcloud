@@ -50,18 +50,7 @@ public class FileService {
 
         logger.info("Обработка запроса на загрузку файла");
 
-        MyUserDetails user = (MyUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (user == null) {
-            logger.error("Пользователь не обнаружен");
-            throw new UnauthorizedException("Unauthorized Error");
-        }
-
-        if (!jwtService.validateToken(getTokenFromHeader(header), user)) {
-            logger.error("Ошибка валидации токена");
-            throw new UnauthorizedException("Unauthorized error");
-        }
-
+        MyUserDetails user = getAuthenticatedUser(header);
         logger.info("Валидация токена успешна");
 
         if (file == null) {
@@ -104,6 +93,22 @@ public class FileService {
         return index == -1 ? null : fileName.substring(index);
     }
 
+    private MyUserDetails getAuthenticatedUser(String authHeader) {
+
+        MyUserDetails user = (MyUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (user == null) {
+            logger.error("Пользователь не обнаружен");
+            throw new UnauthorizedException("Unauthorized Error");
+        }
+
+        if (!jwtService.validateToken(getTokenFromHeader(authHeader), user)) {
+            logger.error("Ошибка валидации токена");
+            throw new UnauthorizedException("Unauthorized error");
+        }
+        return user;
+    }
+
     public int getSize(File file) {
         return Math.toIntExact(file.length());
     }
@@ -118,18 +123,7 @@ public class FileService {
 
     public File getDownloadFile(String filename, String header){
 
-        MyUserDetails user = (MyUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (user == null) {
-            logger.error("Пользователь не обнаружен");
-            throw new UnauthorizedException("Unauthorized Error");
-        }
-
-        if (!jwtService.validateToken(getTokenFromHeader(header), user)) {
-            logger.error("Ошибка валидации токена");
-            throw new UnauthorizedException("Unauthorized error");
-        }
-
+        MyUserDetails user = getAuthenticatedUser(header);
         logger.info("Валидация успешна");
 
         int currentUserId = user.getId();
@@ -153,19 +147,8 @@ public class FileService {
 
     public void deleteFile(String filename, String header) {
 
-        MyUserDetails user = (MyUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (user == null) {
-            logger.error("Пользователь не обнаружен");
-            throw new UnauthorizedException("Unauthorized Error");
-        }
-
-        if (!jwtService.validateToken(getTokenFromHeader(header), user)) {
-            logger.error("Ошибка валидации токена");
-            throw new UnauthorizedException("Unauthorized error");
-        }
-
-        logger.info("Валидация успешна");
+        MyUserDetails user = getAuthenticatedUser(header);
+        logger.info("Валидация токена успешна");
 
         int currentUserId = user.getId();
 
@@ -182,24 +165,14 @@ public class FileService {
     }
 
     public FileMeta renameFile(String oldFilename, String newFilename, String header) {
-        MyUserDetails user = (MyUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (oldFilename == null || newFilename == null) {
             logger.error("Отсутствует новое или старое имя файла для изменения");
             throw new GeneralRequestException("Error input data");
         }
 
-        if (user == null) {
-            logger.error("Пользователь не обнаружен");
-            throw new UnauthorizedException("Unauthorized Error");
-        }
-
-        if (!jwtService.validateToken(getTokenFromHeader(header), user)) {
-            logger.error("Ошибка валидации токена");
-            throw new UnauthorizedException("Unauthorized error");
-        }
-
-        logger.info("Валидация успешна");
+        MyUserDetails user = getAuthenticatedUser(header);
+        logger.info("Валидация токена успешна");
 
         return fileRepository.updateName(oldFilename, newFilename);
     }
@@ -211,18 +184,8 @@ public class FileService {
             throw new GeneralRequestException("Error input data");
         }
 
-        MyUserDetails user = (MyUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (user == null) {
-            logger.error("Пользователь не обнаружен");
-            throw new UnauthorizedException("Unauthorized Error");
-        }
-
-        if (!jwtService.validateToken(getTokenFromHeader(header), user)) {
-            logger.error("Ошибка валидации токена");
-            throw new UnauthorizedException("Unauthorized error");
-        }
-        logger.info("Валидация успешна");
+        MyUserDetails user = getAuthenticatedUser(header);
+        logger.info("Валидация токена успешна");
 
         int userId = user.getId();
         List<FileMeta> metaList = fileRepository.findAllByUserId(userId);
