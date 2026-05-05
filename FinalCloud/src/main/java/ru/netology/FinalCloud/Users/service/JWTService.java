@@ -5,9 +5,12 @@ import io.jsonwebtoken.JwtParserBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import ru.netology.FinalCloud.FileCloud.service.FileService;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -21,6 +24,7 @@ public class JWTService {
 
     @Value("${secret.key}")
     private String secretKey;
+    private static final Logger logger = LoggerFactory.getLogger(JWTService.class);
 
     //получаем ключ
     private SecretKey getKey() {
@@ -30,6 +34,7 @@ public class JWTService {
 
     //генерируем токен
     public String generateToken(String username) {
+        logger.info("Генерируем токен для пользователя: " + username);
         return Jwts.builder()
                 .subject(username)
                 .id(UUID.randomUUID().toString())
@@ -79,6 +84,7 @@ public class JWTService {
 
     //проверяем токен - userName, срок действия токена, есть ли в черном списке
     public boolean validateToken(String token, UserDetails userDetails) {
+        logger.info("Токен проходит валидацию");
         String userName = extractUserName(token);
         return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }

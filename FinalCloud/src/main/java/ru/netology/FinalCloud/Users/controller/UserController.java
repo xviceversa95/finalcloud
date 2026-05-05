@@ -49,6 +49,7 @@ public class UserController {
         if (authToken != null && authToken.startsWith("Bearer ")) {
             jWTBlackListService.deactivateToken(authToken.substring(7));
         }
+        logger.info("Успешно разлогинили пользователя");
         return ResponseEntity.ok("Successfully deactivated token" + authToken);
     }
 }

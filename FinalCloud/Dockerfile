@@ -27,8 +27,5 @@ FROM eclipse-temurin:21-jre-alpine
 # Копируем собранный .jar файл из первого этапа в текущий образ
 COPY --from=MAVEN_BUILD /build/target/*.jar app.jar
 
-# Задаем переменную окружения для Spring (не обязательно, если уже в docker-compose)
-# ENV SPRING_PROFILES_ACTIVE=prod
-
 # Команда, которая будет выполнена при запуске контейнера
 ENTRYPOINT ["java", "-jar", "/app.jar"]

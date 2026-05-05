@@ -29,7 +29,7 @@ public class AuthService {
     //проверяем, если юзер ввел верные логин и пароль - генерируем токен
     // и кладем в Security Context объект Authentification с инфой о текущем юзере
     public String verify (JwtRequest request) {
-        System.out.println("Verify User");
+        logger.info("Получили запрос, начинаем валидацию");
         try {
             Authentication authentication =
                     authManager.authenticate(new UsernamePasswordAuthenticationToken(request.getLogin(), request.getPassword()));

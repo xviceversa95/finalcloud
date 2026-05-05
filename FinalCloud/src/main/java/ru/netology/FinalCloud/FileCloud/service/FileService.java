@@ -48,22 +48,24 @@ public class FileService {
 
     public FileMeta upload(MultipartFile file, String filename, String header) {
 
-        logger.info("Запрос на загрузку файла получен");
+        logger.info("Обработка запроса на загрузку файла");
 
         MyUserDetails user = (MyUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (user == null) {
+            logger.error("Пользователь не обнаружен");
             throw new UnauthorizedException("Unauthorized Error");
         }
 
         if (!jwtService.validateToken(getTokenFromHeader(header), user)) {
-            logger.info("Ошибка валидации токена");
+            logger.error("Ошибка валидации токена");
             throw new UnauthorizedException("Unauthorized error");
         }
 
-        logger.info("Валидация успешна");
+        logger.info("Валидация токена успешна");
 
         if (file == null) {
+            logger.error("Отсутствует файл");
             throw new GeneralRequestException("Error input data");
         }
 
@@ -92,7 +94,7 @@ public class FileService {
 
         int userId = user.getId();
         FileMeta meta = new FileMeta(generateID(), userId, filename, mimeType, getExtension(targetFile.getName()), targetFile.getName(), getSize(targetFile), LocalDateTime.now(), getPath(targetFile));
-        System.out.println(meta);
+        logger.info("Сохраняем файл: " + meta);
         return fileRepository.save(meta);
     }
 
@@ -119,11 +121,12 @@ public class FileService {
         MyUserDetails user = (MyUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (user == null) {
+            logger.error("Пользователь не обнаружен");
             throw new UnauthorizedException("Unauthorized Error");
         }
 
         if (!jwtService.validateToken(getTokenFromHeader(header), user)) {
-            logger.info("Ошибка валидации токена");
+            logger.error("Ошибка валидации токена");
             throw new UnauthorizedException("Unauthorized error");
         }
 
@@ -153,11 +156,12 @@ public class FileService {
         MyUserDetails user = (MyUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (user == null) {
+            logger.error("Пользователь не обнаружен");
             throw new UnauthorizedException("Unauthorized Error");
         }
 
         if (!jwtService.validateToken(getTokenFromHeader(header), user)) {
-            logger.info("Validation failed");
+            logger.error("Ошибка валидации токена");
             throw new UnauthorizedException("Unauthorized error");
         }
 
@@ -181,15 +185,17 @@ public class FileService {
         MyUserDetails user = (MyUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (oldFilename == null || newFilename == null) {
+            logger.error("Отсутствует новое или старое имя файла для изменения");
             throw new GeneralRequestException("Error input data");
         }
 
         if (user == null) {
+            logger.error("Пользователь не обнаружен");
             throw new UnauthorizedException("Unauthorized Error");
         }
 
         if (!jwtService.validateToken(getTokenFromHeader(header), user)) {
-            logger.info("Validation failed");
+            logger.error("Ошибка валидации токена");
             throw new UnauthorizedException("Unauthorized error");
         }
 
@@ -201,17 +207,19 @@ public class FileService {
     public List<FileMeta> getFileList(String header) {
 
         if (header == null) {
+            logger.error("Отсутсвует токен в хэдере запроса");
             throw new GeneralRequestException("Error input data");
         }
 
         MyUserDetails user = (MyUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (user == null) {
+            logger.error("Пользователь не обнаружен");
             throw new UnauthorizedException("Unauthorized Error");
         }
 
         if (!jwtService.validateToken(getTokenFromHeader(header), user)) {
-            logger.info("Validation failed");
+            logger.error("Ошибка валидации токена");
             throw new UnauthorizedException("Unauthorized error");
         }
         logger.info("Валидация успешна");
@@ -220,6 +228,7 @@ public class FileService {
         List<FileMeta> metaList = fileRepository.findAllByUserId(userId);
 
         if (metaList == null) {
+            logger.error("Нет списка с файлами");
             throw new GeneralServerError("Error getting file list");
         }
         System.out.println(metaList);
