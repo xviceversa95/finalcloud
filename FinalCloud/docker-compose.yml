@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # --- 1. СЕРВИС ПРИЛОЖЕНИЯ (ВАШ SPRING BOOT APP) ---
+  finalcloud:
+    build: .
+    container_name: finalcloud_app
+    hostname: finalcloud
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgresdb
+      - mongodb
+    environment:
+      SPRING_APPLICATION_NAME: FinalCloud
+      SERVER_PORT: 8081
+
+      # --- КОНФИГУРАЦИЯ POSTGRESQL ---
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresdb:5432/userdatabasete
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+      SPRING_JPA_SHOW_SQL: true
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+
+      # --- КОНФИГУРАЦИЯ MONGODB ---
+      SPRING_DATA_MONGODB_HOST: mongodb
+      SPRING_DATA_MONGODB_DATABASE: mongo
+      SPRING_DATA_MONGODB_AUTO_INDEX_CREATION: false
+
+    volumes:
+      - C:/filecloud/storage:/filecloud/storage
+
+  # --- POSTGRESQL ---
+  postgresdb:
+    image: postgres:17-alpine # Было 15-alpine, стало 17-alpine
+    container_name: finalcloud_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: userdatabasete
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  # --- MONGODB ---
+  mongodb:
+    image: mongo:7.0
+    container_name: finalcloud_mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  pg_data:
+  mongo_data:
