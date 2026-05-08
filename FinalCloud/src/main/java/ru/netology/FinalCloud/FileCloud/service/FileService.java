@@ -174,7 +174,7 @@ public class FileService {
         MyUserDetails user = getAuthenticatedUser(header);
         logger.info("Валидация токена успешна");
 
-        return fileRepository.updateName(oldFilename, newFilename);
+        return fileRepository.updateName(oldFilename, newFilename, user.getId());
     }
 
     public List<FileMeta> getFileList(String header) {

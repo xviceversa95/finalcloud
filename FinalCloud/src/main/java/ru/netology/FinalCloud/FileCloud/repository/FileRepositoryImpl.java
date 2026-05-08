@@ -16,8 +16,9 @@ public class FileRepositoryImpl implements FileRepositoryCustom {
     }
 
     @Override
-    public FileMeta updateName(String oldFileName, String newFilename) {
-        Query query = new Query(Criteria.where("originalName").is(oldFileName));
+    public FileMeta updateName(String oldFileName, String newFilename, int userId) {
+        Query query = new Query(Criteria.where("originalName").is(oldFileName)
+                .and("userId").is(userId));
         Update update = new Update().set("originalName", newFilename);
         return template.findAndModify(query, update, FindAndModifyOptions.options().returnNew(true), FileMeta.class);
     }

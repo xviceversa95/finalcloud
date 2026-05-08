@@ -29,13 +29,22 @@ public class JWTBlackListService {
     }
 
     public JwtBlackListModel addToBlackList(String token) {
-        JwtBlackListModel model = new JwtBlackListModel(token, jwtService.extractId(token), new Date(System.currentTimeMillis() + 60 * 60 * 10 * 1000));
+        JwtBlackListModel model = new JwtBlackListModel(token, jwtService.extractId(token), new Date(System.currentTimeMillis() + 5 * 60 * 1000));
         return jwtBlackListRepo.save(model);
     }
 
     public boolean isInBlackList(String token) {
         String id = jwtService.extractId(token);
         return jwtBlackListRepo.existsById(id);
+    }
+
+    @PostConstruct
+    public void ensureTtlIndex() {
+        IndexOperations indexOps = mongoTemplate.indexOps(JwtBlackListModel.class);
+        Index ttlIndex = new Index()
+                .on("expiresAt", Sort.Direction.ASC)
+                .expire(0);
+        indexOps.createIndex(ttlIndex);
     }
 
 }

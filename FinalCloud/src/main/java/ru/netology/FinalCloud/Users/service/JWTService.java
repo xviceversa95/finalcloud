@@ -39,7 +39,7 @@ public class JWTService {
                 .subject(username)
                 .id(UUID.randomUUID().toString())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 60 * 60 * 10 * 1000))
+                .expiration(new Date(System.currentTimeMillis() + 5 * 60 * 1000))
                 .signWith(getKey())
                 .compact();
     }
@@ -47,7 +47,6 @@ public class JWTService {
     //вытаскиваем все клэймы
     private Claims extractAllClaims(String token) {
         token = token.trim().replaceAll("\\s+", "");
-        System.out.println(token);
         JwtParserBuilder parser = Jwts.parser();
         parser.verifyWith(getKey());
 
