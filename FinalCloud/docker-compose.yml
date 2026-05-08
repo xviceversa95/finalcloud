@@ -14,6 +14,7 @@ services:
     environment:
       SPRING_APPLICATION_NAME: FinalCloud
       SERVER_PORT: 8081
+      SECRET_KEY: ${SECRET_KEY}
 
       # --- КОНФИГУРАЦИЯ POSTGRESQL ---
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgresdb:5432/userdatabasete

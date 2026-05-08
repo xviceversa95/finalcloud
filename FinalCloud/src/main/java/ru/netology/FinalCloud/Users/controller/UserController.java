@@ -34,7 +34,7 @@ public class UserController {
     public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest request) {
         logger.info("Запрос на авторизацию");
         String token = authService.verify(request);
-        logger.info("Токен получен: " + token);
+        logger.info("Токен получен");
         if (token == null) {
             logger.info("Проблема с токеном, авторизация не прошла");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

@@ -46,5 +46,4 @@ public class JWTBlackListService {
                 .expire(0);
         indexOps.createIndex(ttlIndex);
     }
-
 }
